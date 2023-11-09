@@ -1,4 +1,6 @@
 const express = require('express');
+const { ObjectId } = require('mongodb');
+
 const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 require('dotenv').config();
@@ -40,6 +42,7 @@ run().catch(console.dir);
 
 // Define your route handlers here
 const novelCollection = client.db('BookCategorysDB').collection('Novel');
+const allCollections = client.db('BookCategorysDB').collection('AllBook');
 const thrillerCollection = client.db('BookCategorysDB').collection('thriller');
 const historyCollection = client.db('BookCategorysDB').collection('history');
 const dramaCollection = client.db('BookCategorysDB').collection('drama');
@@ -50,31 +53,36 @@ app.post('/novel', async (req, res) => {
   const newBook = req.body;
   console.log(newBook);
   const result = await novelCollection.insertOne(newBook);
-  res.send(result);
+  const results = await allCollections.insertOne(newBook);
+  res.json({ result, results });
 });
 app.post('/thriller', async (req, res) => {
   const newBook = req.body;
   console.log(newBook);
   const result = await thrillerCollection.insertOne(newBook);
-  res.send(result);
+  const results = await allCollections.insertOne(newBook);
+  res.json({ result, results });
 });
 app.post('/history', async (req, res) => {
   const newBook = req.body;
   console.log(newBook);
   const result = await historyCollection.insertOne(newBook);
-  res.send(result);
+  const results = await allCollections.insertOne(newBook);
+  res.json({ result, results });
 });
 app.post('/drama', async (req, res) => {
   const newBook = req.body;
   console.log(newBook);
   const result = await dramaCollection.insertOne(newBook);
-  res.send(result);
+  const results = await allCollections.insertOne(newBook);
+  res.json({ result, results });
 });
 app.post('/sci-fi', async (req, res) => {
   const newBook = req.body;
   console.log(newBook);
   const result = await sci_FiCollection.insertOne(newBook);
-  res.send(result);
+  const results = await allCollections.insertOne(newBook);
+  res.json({ result, results });
 });
 
 app.post('/borrowbook/:bookId', async (req, res) => {
@@ -108,16 +116,44 @@ app.get('/sci-fi', async (req, res) => {
   const books = await sci_FiCollection.find({}).toArray();
   res.json(books);
 });
+app.get('/allbook', async (req, res) => {
+    const books = await allCollections.find({}).toArray();
+    res.json(books);
+  });
 app.get('/borrowbook', async (req, res) => {
     const products = await MyBorrowBook.find({}).toArray();
     res.json(products);
 });
-// app.get('/novel/:id', async (req, res) => {
-//     const id = req.params.id;
-//     const query = { _id: new ObjectId(id) }
-//     const result = await novelCollection.findOne(query);
-//     res.send(result);
-// });
+app.get('/novel/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) }
+    const result = await novelCollection.findOne(query);
+    res.send(result);
+});
+app.get('/thriller/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) }
+    const result = await thrillerCollection.findOne(query);
+    res.send(result);
+});
+app.get('/history/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) }
+    const result = await historyCollection.findOne(query);
+    res.send(result);
+});
+app.get('/drama/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) }
+    const result = await dramaCollection.findOne(query);
+    res.send(result);
+});
+app.get('/sci-fi/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) }
+    const result = await sci_FiCollection.findOne(query);
+    res.send(result);
+});
 
 app.get('/', (req, res) => {
   res.send('It is working');
