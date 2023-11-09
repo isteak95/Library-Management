@@ -1,4 +1,6 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+
 const { ObjectId } = require('mongodb');
 
 const cors = require('cors');
@@ -19,23 +21,23 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
 });
 
 async function run() {
-  try {
-    // Connect the client to the server
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Don't close the client here to keep the connection open
-  }
+    try {
+        // Connect the client to the server
+        await client.connect();
+        // Send a ping to confirm a successful connection
+        await client.db("admin").command({ ping: 1 });
+        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    } finally {
+        // Don't close the client here to keep the connection open
+    }
 }
 
 run().catch(console.dir);
@@ -50,39 +52,39 @@ const sci_FiCollection = client.db('BookCategorysDB').collection('sci-Fi');
 const MyBorrowBook = client.db('BorrowBookDB').collection('borrowbook');
 
 app.post('/novel', async (req, res) => {
-  const newBook = req.body;
-  console.log(newBook);
-  const result = await novelCollection.insertOne(newBook);
-  const results = await allCollections.insertOne(newBook);
-  res.json({ result, results });
+    const newBook = req.body;
+    console.log(newBook);
+    const result = await novelCollection.insertOne(newBook);
+    const results = await allCollections.insertOne(newBook);
+    res.json({ result, results });
 });
 app.post('/thriller', async (req, res) => {
-  const newBook = req.body;
-  console.log(newBook);
-  const result = await thrillerCollection.insertOne(newBook);
-  const results = await allCollections.insertOne(newBook);
-  res.json({ result, results });
+    const newBook = req.body;
+    console.log(newBook);
+    const result = await thrillerCollection.insertOne(newBook);
+    const results = await allCollections.insertOne(newBook);
+    res.json({ result, results });
 });
 app.post('/history', async (req, res) => {
-  const newBook = req.body;
-  console.log(newBook);
-  const result = await historyCollection.insertOne(newBook);
-  const results = await allCollections.insertOne(newBook);
-  res.json({ result, results });
+    const newBook = req.body;
+    console.log(newBook);
+    const result = await historyCollection.insertOne(newBook);
+    const results = await allCollections.insertOne(newBook);
+    res.json({ result, results });
 });
 app.post('/drama', async (req, res) => {
-  const newBook = req.body;
-  console.log(newBook);
-  const result = await dramaCollection.insertOne(newBook);
-  const results = await allCollections.insertOne(newBook);
-  res.json({ result, results });
+    const newBook = req.body;
+    console.log(newBook);
+    const result = await dramaCollection.insertOne(newBook);
+    const results = await allCollections.insertOne(newBook);
+    res.json({ result, results });
 });
 app.post('/sci-fi', async (req, res) => {
-  const newBook = req.body;
-  console.log(newBook);
-  const result = await sci_FiCollection.insertOne(newBook);
-  const results = await allCollections.insertOne(newBook);
-  res.json({ result, results });
+    const newBook = req.body;
+    console.log(newBook);
+    const result = await sci_FiCollection.insertOne(newBook);
+    const results = await allCollections.insertOne(newBook);
+    res.json({ result, results });
 });
 
 app.post('/borrowbook/:bookId', async (req, res) => {
@@ -97,27 +99,38 @@ app.post('/borrowbook/:bookId', async (req, res) => {
 
 
 app.get('/novel', async (req, res) => {
-  const books = await novelCollection.find({}).toArray();
-  res.json(books);
+    const books = await novelCollection.find({}).toArray();
+    res.json(books);
 });
 app.get('/thriller', async (req, res) => {
-  const books = await thrillerCollection.find({}).toArray();
-  res.json(books);
+    const books = await thrillerCollection.find({}).toArray();
+    res.json(books);
 });
 app.get('/history', async (req, res) => {
-  const books = await historyCollection.find({}).toArray();
-  res.json(books);
+    const books = await historyCollection.find({}).toArray();
+    res.json(books);
 });
 app.get('/drama', async (req, res) => {
-  const books = await dramaCollection.find({}).toArray();
-  res.json(books);
+    const books = await dramaCollection.find({}).toArray();
+    res.json(books);
 });
 app.get('/sci-fi', async (req, res) => {
-  const books = await sci_FiCollection.find({}).toArray();
-  res.json(books);
+    const books = await sci_FiCollection.find({}).toArray();
+    res.json(books);
 });
 
+app.use(bodyParser.json());
 
+app.delete('/allbook/:id', async (req, res) => {
+    const id = req.params.id;
+    const query = { _id: id };
+    console.log('ID to delete:', id);
+    console.log('Query:', query);
+    const result = await allCollections.deleteOne(query);
+    console.log('Delete result:', result);
+
+    res.send(result);
+});
 
 
 
@@ -150,7 +163,7 @@ app.put('/novel/:id', async (req, res) => {
 app.get('/allbook', async (req, res) => {
     const books = await allCollections.find({}).toArray();
     res.json(books);
-  });
+});
 app.get('/borrowbook', async (req, res) => {
     const products = await MyBorrowBook.find({}).toArray();
     res.json(products);
@@ -187,9 +200,9 @@ app.get('/sci-fi/:id', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('It is working');
+    res.send('It is working');
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port ${port}`);
 });
