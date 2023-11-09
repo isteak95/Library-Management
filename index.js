@@ -116,6 +116,37 @@ app.get('/sci-fi', async (req, res) => {
   const books = await sci_FiCollection.find({}).toArray();
   res.json(books);
 });
+
+
+
+
+
+app.put('/novel/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) };
+        const options = { upsert: true };
+        const updateBook = req.body;
+
+        const product = {
+            $set: {
+                name: updateBook.name,
+                anotherName: updateBook.anotherName,
+                rating: updateBook.rating,
+                category: updateBook.Category,
+                image: updateBook.image,
+            },
+        };
+
+        const result = await novelCollection.updateOne(filter, product, options);
+        res.send(result);
+    } catch (error) {
+        console.error('Error updating book:', error);
+        res.status(500).json({ error: 'An error occurred while updating the book.' });
+    }
+});
+
+
 app.get('/allbook', async (req, res) => {
     const books = await allCollections.find({}).toArray();
     res.json(books);
